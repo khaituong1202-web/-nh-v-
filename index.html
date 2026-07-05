@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nạp Game - Khaituong</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="main-header">
+    <div class="container">
+        <div class="header-inner">
+            <div class="brand">
+                <i class="fas fa-crown"></i>
+                <span>Khaituong<span class="brand-highlight">.shop</span></span>
+            </div>
+            
+            <div class="user-section" id="userSection">
+                <div class="user-guest" id="guestView">
+                    <button class="btn-login" id="showLoginBtn">
+                        <i class="fas fa-user-circle"></i> Đăng nhập
+                    </button>
+                    <button class="btn-register" id="showRegisterBtn">
+                        <i class="fas fa-user-plus"></i> Đăng ký
+                    </button>
+                </div>
+                
+                <div class="user-logged" id="userView" style="display:none;">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userDisplayName">User</div>
+                        <div class="user-role" id="userRoleDisplay">Thành viên</div>
+                        <div class="user-wallet" id="userWallet">💰 0đ</div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="btn-wallet" id="showWalletBtn" title="Nạp ví">
+                            <i class="fas fa-wallet"></i>
+                        </button>
+                        <button class="btn-logout" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ===== LOGIN MODAL ===== -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-sign-in-alt"></i> Đăng nhập</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email / Tên đăng nhập</label>
+                        <input type="text" class="form-control-custom" id="loginUsername" placeholder="Nhập email hoặc tên đăng nhập" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Mật khẩu</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control-custom" id="loginPassword" placeholder="Nhập mật khẩu" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-payment">Đăng nhập</button>
+                    <div class="auth-switch">
+                        Chưa có tài khoản? <a href="#" id="switchToRegister">Đăng ký ngay</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== REGISTER MODAL ===== -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-plus"></i> Đăng ký</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Tên hiển thị</label>
+                        <input type="text" class="form-control-custom" id="regDisplayName" placeholder="Nhập tên của bạn" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" class="form-control-custom" id="regEmail" placeholder="Nhập email" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Mật khẩu</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control-custom" id="regPassword" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('regPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Xác nhận mật khẩu</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control-custom" id="regConfirmPassword" placeholder="Nhập lại mật khẩu" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('regConfirmPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-payment">Đăng ký</button>
+                    <div class="auth-switch">
+                        Đã có tài khoản? <a href="#" id="switchToLogin">Đăng nhập</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== WALLET MODAL ===== -->
+<div class="modal fade modal-qr" id="walletModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-wallet"></i> Nạp ví</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="wallet-balance">
+                    <p>Số dư hiện tại: <strong id="walletBalanceDisplay" class="text-momo">0đ</strong></p>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label>Số tiền cần nạp</label>
+                    <div class="wallet-preset">
+                        <button type="button" class="preset-btn" data-amount="10000">10,000đ</button>
+                        <button type="button" class="preset-btn" data-amount="20000">20,000đ</button>
+                        <button type="button" class="preset-btn" data-amount="50000">50,000đ</button>
+                        <button type="button" class="preset-btn" data-amount="100000">100,000đ</button>
+                        <button type="button" class="preset-btn" data-amount="200000">200,000đ</button>
+                        <button type="button" class="preset-btn" data-amount="500000">500,000đ</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nhập số tiền khác</label>
+                    <input type="number" class="form-control-custom" id="walletAmount" placeholder="Nhập số tiền cần nạp (tối thiểu 10,000đ)" min="10000">
+                </div>
+                <button type="button" class="btn-payment" id="walletPaymentBtn"><i class="fas fa-qrcode"></i> Nạp ví qua Momo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div class="login-overlay" id="loginOverlay">
+    <div class="login-overlay-content">
+        <div class="login-overlay-icon">
+            <i class="fas fa-lock"></i>
+        </div>
+        <h2>🔒 Yêu cầu đăng nhập</h2>
+        <p>Vui lòng đăng nhập để sử dụng dịch vụ nạp game</p>
+        <div class="login-overlay-buttons">
+            <button class="btn-login-overlay" id="overlayLoginBtn">
+                <i class="fas fa-sign-in-alt"></i> Đăng nhập
+            </button>
+            <button class="btn-register-overlay" id="overlayRegisterBtn">
+                <i class="fas fa-user-plus"></i> Đăng ký
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== BANNED OVERLAY ===== -->
+<div class="banned-overlay" id="bannedOverlay" style="display:none;">
+    <div class="banned-overlay-content">
+        <div class="banned-icon">
+            <i class="fas fa-ban"></i>
+        </div>
+        <h2>🚫 Tài khoản đã bị khóa</h2>
+        <p>Tài khoản của bạn đã bị khóa do vi phạm chính sách.</p>
+        <p class="banned-contact-text">📌 Vui lòng liên hệ hỗ trợ để biết thêm chi tiết:</p>
+        <div class="banned-buttons">
+            <a href="https://zalo.me/0868687049" target="_blank" class="btn-contact-banned">
+                <i class="fas fa-comment-dots"></i> Liên hệ Zalo
+            </a>
+            <a href="tel:0868687049" class="btn-contact-banned-secondary">
+                <i class="fas fa-phone"></i> Gọi ngay 0868.687.049
+            </a>
+        </div>
+        <button class="btn-logout-banned" id="logoutBannedBtn">
+            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+        </button>
+    </div>
+</div>
+
+<!-- ===== ZALO FLOATING BUTTON ===== -->
+<a href="https://zalo.me/0868687049" target="_blank" class="zalo-float-btn" title="Liên hệ Zalo hỗ trợ 24/7">
+    <i class="fas fa-comment-dots"></i>
+    <span class="zalo-badge">Hỗ trợ</span>
+</a>
+
+<div class="container py-4">
+    <!-- Game Tabs -->
+    <div class="game-tabs-wrapper">
+        <ul class="game-tabs" id="gameTabs">
+            <li class="active" data-game="freefire" onclick="switchTab('freefire')">
+                <i class="fas fa-fire"></i> Free Fire
+            </li>
+            <li data-game="lienquan" onclick="switchTab('lienquan')">
+                <i class="fas fa-gamepad"></i> Liên Quân
+            </li>
+            <li data-game="admin" id="adminTab" style="display:none;" onclick="switchTab('admin')">
+                <i class="fas fa-user-shield"></i> Admin
+            </li>
+        </ul>
+    </div>
+
+    <!-- Game Content -->
+    <div id="gameContent">
+        <!-- Free Fire -->
+        <div class="game-panel active" id="panel-freefire">
+            <div class="game-header">
+                <div class="game-icon"><i class="fas fa-fire"></i></div>
+                <div>
+                    <h1 class="game-title">Free Fire - KC (UID)</h1>
+                    <div>
+                        <span class="badge-game">GARENA2</span>
+                        <span class="badge-partner">Đối tác chính thức</span>
+                    </div>
+                    <p class="text-muted small">Nạp Kim Cương Free Fire tự động, nhanh chóng và uy tín</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card-custom">
+                        <h5 class="card-title"><i class="fas fa-gem text-momo"></i> Chọn gói nạp</h5>
+                        <div class="row package-grid" id="packageGridFF"></div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Lưu ý:</strong> Kiểm tra kỹ ID nhân vật trước khi thanh toán.
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-custom">
+                        <h5 class="card-title"><i class="fas fa-shopping-cart text-momo"></i> Thông tin đơn hàng</h5>
+                        <form id="formFF">
+                            <input type="hidden" name="game_id" value="54">
+                            <input type="hidden" name="package" class="selected-package-code">
+                            <input type="hidden" name="amount" class="selected-amount">
+                            <div class="form-group">
+                                <label>ID Game <span class="text-danger">*</span></label>
+                                <input type="text" name="id_game" class="form-control-custom" placeholder="Nhập ID game" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Chiết khấu <span class="text-danger">*</span></label>
+                                <select name="fee_code" class="form-control-custom fee-code">
+                                    <option value="FF12" data-fee="8.5" selected>8.5%</option>
+                                    <option value="FF10" data-fee="10">10%</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Phương thức thanh toán</label>
+                                <div class="payment-methods">
+                                    <label class="payment-method active">
+                                        <input type="radio" name="payment_method" value="wallet" checked>
+                                        <i class="fas fa-wallet"></i> Ví điện tử (💰 <span class="wallet-balance-small">0đ</span>)
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="order-summary">
+                                <div class="d-flex justify-content-between"><span>Tạm tính:</span><span class="subtotal">0đ</span></div>
+                                <div class="d-flex justify-content-between text-muted small"><span>Chiết khấu (<span class="fee-percent">8.5</span>%):</span><span class="fee-display">0đ</span></div>
+                                <hr>
+                                <div class="d-flex justify-content-between font-weight-bold"><span>Tổng:</span><span class="total-display text-momo">0đ</span></div>
+                            </div>
+                            <button type="button" class="btn-payment mt-3 payment-btn"><i class="fas fa-wallet"></i> Thanh toán bằng Ví</button>
+                            <div id="orderStatus" class="mt-2" style="display:none;"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liên Quân -->
+        <div class="game-panel" id="panel-lienquan">
+            <div class="game-header">
+                <div class="game-icon"><i class="fas fa-gamepad"></i></div>
+                <div>
+                    <h1 class="game-title">Liên Quân UID (FB&amp;GG)</h1>
+                    <div>
+                        <span class="badge-game">GARENA2</span>
+                        <span class="badge-partner">Đối tác chính thức</span>
+                    </div>
+                    <p class="text-muted small">Nạp Quân Huy Liên Quân tự động, nhanh chóng và uy tín</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card-custom">
+                        <h5 class="card-title"><i class="fas fa-gem text-momo"></i> Chọn gói nạp</h5>
+                        <div class="row package-grid" id="packageGridLQ"></div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Lưu ý:</strong> Kiểm tra kỹ ID nhân vật trước khi thanh toán.
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-custom">
+                        <h5 class="card-title"><i class="fas fa-shopping-cart text-momo"></i> Thông tin đơn hàng</h5>
+                        <form id="formLQ">
+                            <input type="hidden" name="game_id" value="117">
+                            <input type="hidden" name="package" class="selected-package-code">
+                            <input type="hidden" name="amount" class="selected-amount">
+                            <div class="form-group">
+                                <label>ID Game <span class="text-danger">*</span></label>
+                                <input type="text" name="id_game" class="form-control-custom" placeholder="Nhập ID game" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Chiết khấu <span class="text-danger">*</span></label>
+                                <select name="fee_code" class="form-control-custom fee-code">
+                                    <option value="FF12" data-fee="8.5" selected>8.5%</option>
+                                    <option value="FF10" data-fee="10">10%</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Phương thức thanh toán</label>
+                                <div class="payment-methods">
+                                    <label class="payment-method active">
+                                        <input type="radio" name="payment_method" value="wallet" checked>
+                                        <i class="fas fa-wallet"></i> Ví điện tử (💰 <span class="wallet-balance-small">0đ</span>)
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="order-summary">
+                                <div class="d-flex justify-content-between"><span>Tạm tính:</span><span class="subtotal">0đ</span></div>
+                                <div class="d-flex justify-content-between text-muted small"><span>Chiết khấu (<span class="fee-percent">8.5</span>%):</span><span class="fee-display">0đ</span></div>
+                                <hr>
+                                <div class="d-flex justify-content-between font-weight-bold"><span>Tổng:</span><span class="total-display text-momo">0đ</span></div>
+                            </div>
+                            <button type="button" class="btn-payment mt-3 payment-btn"><i class="fas fa-wallet"></i> Thanh toán bằng Ví</button>
+                            <div id="orderStatusLQ" class="mt-2" style="display:none;"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ADMIN PANEL - XOÁ THỐNG KÊ + 13 CHỨC NĂNG BOT ===== -->
+        <div class="game-panel" id="panel-admin">
+            <!-- Admin Header -->
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 16px; padding: 18px 24px; margin-bottom: 20px; color: white;">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h2 style="margin:0; font-weight:700; font-size:20px;"><i class="fas fa-user-shield"></i> Quản trị hệ thống</h2>
+                        <p style="margin:2px 0 0; opacity:0.8; font-size:13px;"><i class="fas fa-users"></i> Quản lý thành viên & giao dịch</p>
+                    </div>
+                    <div style="font-size:13px; opacity:0.8;">
+                        <i class="fas fa-users"></i> <span id="totalMembers">0</span> thành viên
+                        <span style="margin:0 8px;">|</span>
+                        <i class="fas fa-clock"></i> <span id="lastUpdate">Đang cập nhật...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- ===== DANH SÁCH THÀNH VIÊN ===== -->
+                <div class="col-lg-7">
+                    <div class="card-custom">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0"><i class="fas fa-users text-momo"></i> Danh sách thành viên</h5>
+                            <button class="btn-admin-outline" onclick="adminAddMember()" style="padding:4px 14px;font-size:13px;">
+                                <i class="fas fa-plus"></i> Thêm
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-custom" id="memberTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40px;">#</th>
+                                        <th>Tên</th>
+                                        <th>Email</th>
+                                        <th class="text-right">Số dư</th>
+                                        <th class="text-center">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="memberList">
+                                    <!-- Render by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-muted small mt-2">
+                            <i class="fas fa-info-circle"></i> Click <i class="fas fa-edit" style="color:#667eea;"></i> để set số dư | <i class="fas fa-trash" style="color:#ef4444;"></i> để xóa user
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== DUYỆT TIỀN & CHUYỂN TIỀN ===== -->
+                <div class="col-lg-5">
+                    <!-- Duyệt tiền -->
+                    <div class="card-custom">
+                        <h5 class="card-title"><i class="fas fa-check-circle text-success"></i> Duyệt nạp tiền</h5>
+                        <div id="pendingTxList" style="max-height: 200px; overflow-y: auto;">
+                            <!-- Render by JS -->
+                        </div>
+                        <div class="text-muted small mt-2" id="noPendingTx">
+                            <i class="fas fa-check-circle" style="color:#10b981;"></i> Không có giao dịch chờ duyệt
+                        </div>
+                    </div>
+
+                    <!-- Chuyển tiền -->
+                    <div class="card-custom">
+                        <h5 class="card-title"><i class="fas fa-exchange-alt text-momo"></i> Chuyển tiền</h5>
+                        <form id="transferForm">
+                            <div class="form-group">
+                                <label><i class="fas fa-arrow-up text-success"></i> Người gửi</label>
+                                <select name="from_member" class="form-control-custom" id="fromMember" required>
+                                    <option value="">Chọn người gửi</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-arrow-down text-danger"></i> Người nhận</label>
+                                <select name="to_member" class="form-control-custom" id="toMember" required>
+                                    <option value="">Chọn người nhận</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-money-bill-wave"></i> Số tiền</label>
+                                <input type="number" name="amount" class="form-control-custom" placeholder="Nhập số tiền" min="1000" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-sticky-note"></i> Nội dung</label>
+                                <input type="text" name="note" class="form-control-custom" placeholder="Nhập nội dung">
+                            </div>
+                            <button type="button" class="btn-admin" onclick="handleTransfer()" style="width:100%;">
+                                <i class="fas fa-paper-plane"></i> Chuyển tiền
+                            </button>
+                            <div id="transferStatus" class="mt-2" style="display:none;"></div>
+                        </form>
+                    </div>
+
+                    <!-- Lịch sử -->
+                    <div class="card-custom">
+                        <h5 class="card-title"><i class="fas fa-history text-momo"></i> Lịch sử giao dịch</h5>
+                        <div class="history-scroll">
+                            <table class="table table-custom table-sm" id="historyTable">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Người gửi</th>
+                                        <th>Người nhận</th>
+                                        <th class="text-right">Số tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyList">
+                                    <!-- Render by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast-custom" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">Thông báo</span>
+    <button class="toast-close" id="toastClose">&times;</button>
+</div>
+
+<!-- ===== QR MODAL ===== -->
+<div class="modal fade modal-qr" id="qrModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-qrcode mr-2"></i> Nạp ví qua Momo</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <div class="qr-wrapper"><img id="qrImage" src="" alt="Mã QR Momo"></div>
+                <div class="transaction-id-box">
+                    <span class="text-muted small">Mã giao dịch:</span>
+                    <span id="transactionDisplay" class="font-weight-bold text-momo">MMO ABC123</span>
+                    <button class="btn-copy" id="copyTransactionBtn"><i class="fas fa-copy"></i></button>
+                </div>
+                <div class="qr-info">
+                    <p><strong><i class="fas fa-user text-momo"></i> Số tài khoản:</strong> <span id="qrPhone">0868687049</span></p>
+                    <p><strong><i class="fas fa-money-bill-wave text-momo"></i> Số tiền:</strong> <span id="qrAmount" class="text-momo font-weight-bold">0đ</span></p>
+                    <p><strong><i class="fas fa-hashtag text-momo"></i> Nội dung:</strong> <span id="qrContent" class="text-momo font-weight-bold">MMO ABC123</span></p>
+                </div>
+                <div id="walletTxStatus" style="display:none; margin-top: 10px; padding: 10px; border-radius: 10px; font-weight: 600;"></div>
+                <p class="text-muted small"><i class="fas fa-info-circle"></i> Quét mã QR bằng ứng dụng Momo</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-3">
+                <button class="btn-payment" id="confirmPaymentBtn" style="width:auto;padding:10px 30px;">
+                    <i class="fas fa-check-circle"></i> Xác nhận đã chuyển tiền
+                </button>
+                <button class="btn-secondary-custom" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<i class="fas fa-eye"></i>';
+    }
+}
+
+function switchTab(gameKey) {
+    document.querySelectorAll('.game-tabs li').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.game === gameKey);
+    });
+    document.querySelectorAll('.game-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `panel-${gameKey}`);
+    });
+    if (gameKey === 'freefire' || gameKey === 'lienquan') {
+        const containerId = gameKey === 'freefire' ? 'packageGridFF' : 'packageGridLQ';
+        const container = document.getElementById(containerId);
+        if (container && !container.querySelector('.package-item')) {
+            if (window.renderPackages) window.renderPackages(gameKey, containerId);
+        }
+    }
+    if (gameKey === 'admin') {
+        setTimeout(function() {
+            if (typeof window.renderAdminPanel === 'function') window.renderAdminPanel();
+            if (typeof window.renderPendingTransactions === 'function') window.renderPendingTransactions();
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('vi-VN');
+        }, 150);
+    }
+}
+
+$(document).ready(function() {
+    $('#showLoginBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#loginModal').modal('show');
+    });
+
+    $('#showRegisterBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#registerModal').modal('show');
+    });
+
+    $('#switchToRegister').on('click', function(e) {
+        e.preventDefault();
+        $('#loginModal').modal('hide');
+        setTimeout(function() {
+            $('#registerModal').modal('show');
+        }, 300);
+    });
+
+    $('#switchToLogin').on('click', function(e) {
+        e.preventDefault();
+        $('#registerModal').modal('hide');
+        setTimeout(function() {
+            $('#loginModal').modal('show');
+        }, 300);
+    });
+
+    $('.preset-btn').on('click', function() {
+        const amount = $(this).data('amount');
+        $('#walletAmount').val(amount);
+        $(this).addClass('active').siblings().removeClass('active');
+    });
+
+    $('#showWalletBtn').on('click', function() {
+        $('#walletModal').modal('show');
+    });
+});
+</script>
+<script src="auth.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
